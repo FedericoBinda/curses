@@ -3,21 +3,41 @@ import time
 
 """A small snake game"""
 
-mydirection = 1 # 0 = up, 1 = right, 2 = down, 3 = left
-myposition = [1,1] # y,x
-mylength = 5 # length of the snake
-
-def am_i_inside(height,width):
-	"""check if the snake hit the wall"""
-	if myposition[0] < 1 or myposition[0] >= height:
-		return False
-	elif myposition[1] < 1 or myposition[1] >= width:
-		return False
-	else:
-		return True
+class Snake:
+	"""A snake is defined by its pixels and direction"""
+	def __init__(self):
+		self.direction = [0,1] # first element = up +1 or down -1; second = right +1 left -1
+		self.pixels = [[0,0]] # the head of the snake is pixellist[0]
+	def init_pixels(self,height,width):
+		"""initialize the pixels according to the height and width of the window"""
+		myrange = range(5)
+		myrange.reverse()
+		self.pixels = [ [height/2,width/2-i] for i in myrange]
+	def show(self,win):
+		"""show the snake in the window"""
+		win.erase()
+		for pixel in self.pixels:
+			win.addstr(pixel[0],pixel[1],'x')
+	def move(self):
+		"""move the snake according to its direction"""
+		self.pixels.pop()
+		ynew = self.pixels[-1][0] - self.direction[0]
+		xnew = self.pixels[-1][1] + self.direction[1]
+		self.pixels.insert(0,[ynew,xnew])
+	def set_direction(self,dir):
+		"""set direction of movement of the snake"""
+		self.direction = dir
+	def am_i_inside(self,height,width):
+		"""check if the snake hit the wall"""
+		myposition = self.pixels[0]
+		if myposition[0] < 1 or myposition[0] >= height:
+			return False
+		elif myposition[1] < 1 or myposition[1] >= width:
+			return False
+		else:
+			return True
 
 def mycurse(stdscr):
-	global myposition
 	curses.curs_set(0) # set invisible cursor
 	begin_x = 20 
 	begin_y = 7
@@ -25,20 +45,16 @@ def mycurse(stdscr):
 	width = 40
 	win = curses.newwin(height, width, begin_y, begin_x) # init window
 	win.nodelay(1) # getch does not block the program
-	myposition = [height/2, width/2] # start snake in the middle
+	snake = Snake()
+	snake.init_pixels(height,width) # init the snake
+	snake.show(win) #show the snake
+	time.sleep(1)
 	key = ''
-	while key != ord('q') and am_i_inside(height,width):
+	while key != ord('q') and snake.am_i_inside(height,width):
 		key = win.getch()
-		move(win)
-	
-def move(win,dt=1):
-	"""move the snake"""
-	global myposition
-	myposition[1] += 1 # change position (1 to right -> implement direction)
-	win.erase() # clear screen
-	win.addstr(myposition[0],myposition[1] - mylength,'x'*mylength) # draw snake
-	win.refresh()
-	time.sleep(dt)
+		snake.move()
+		snake.show(win)
+		time.sleep(1)
 	
 if __name__ == '__main__':
 	curses.wrapper(mycurse)
