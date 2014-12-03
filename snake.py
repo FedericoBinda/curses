@@ -12,7 +12,7 @@ class Snake:
 		"""initialize the pixels according to the height and width of the window"""
 		myrange = range(5)
 		myrange.reverse()
-		self.pixels = [ [height/2,width/2-i] for i in myrange]
+		self.pixels = [ [height/2,width/2 -5 + i] for i in myrange]
 	def show(self,win):
 		"""show the snake in the window"""
 		win.erase()
@@ -21,8 +21,8 @@ class Snake:
 	def move(self):
 		"""move the snake according to its direction"""
 		self.pixels.pop()
-		ynew = self.pixels[-1][0] - self.direction[0]
-		xnew = self.pixels[-1][1] + self.direction[1]
+		ynew = self.pixels[0][0] - self.direction[0]
+		xnew = self.pixels[0][1] + self.direction[1]
 		self.pixels.insert(0,[ynew,xnew])
 	def set_direction(self,dir):
 		"""set direction of movement of the snake"""
@@ -30,9 +30,9 @@ class Snake:
 	def am_i_inside(self,height,width):
 		"""check if the snake hit the wall"""
 		myposition = self.pixels[0]
-		if myposition[0] < 1 or myposition[0] >= height:
+		if myposition[0] <= 1 or myposition[0] >= height-1:
 			return False
-		elif myposition[1] < 1 or myposition[1] >= width:
+		elif myposition[1] <= 1 or myposition[1] >= width-1:
 			return False
 		else:
 			return True
@@ -41,14 +41,14 @@ def mycurse(stdscr):
 	curses.curs_set(0) # set invisible cursor
 	begin_x = 20 
 	begin_y = 7
-	height = 10
+	height = 20
 	width = 40
 	win = curses.newwin(height, width, begin_y, begin_x) # init window
 	win.nodelay(1) # getch does not block the program
 	snake = Snake()
 	snake.init_pixels(height,width) # init the snake
 	snake.show(win) #show the snake
-	time.sleep(1)
+	#time.sleep(1)
 	key = ''
 	while key != ord('q') and snake.am_i_inside(height,width):
 		key = win.getch()
