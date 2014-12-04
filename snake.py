@@ -10,11 +10,12 @@ class Snake:
 		self.direction = 103 # 114 = up (r), 102 = down (f), 103 = right (g), 100 = left (d)
 		self.pixels = [[0,0]] # the head of the snake is pixellist[0]
 		self.acceptkeys = {114 : [1,0], 102 : [-1,0], 103 : [0,1], 100 : [0,-1]}
+		self.length = 5
 	def init_pixels(self,height,width):
 		"""initialize the pixels according to the height and width of the window"""
-		myrange = range(5)
+		myrange = range(self.length)
 		myrange.reverse()
-		self.pixels = [ [height/2,width/2 -5 + i] for i in myrange]
+		self.pixels = [ [height/2,width/2 - self.length + i] for i in myrange]
 	def show(self,win):
 		"""show the snake in the window"""
 		win.erase()
@@ -47,7 +48,7 @@ class Snake:
 	def am_i_suicidal(self):
 		"""check if the snake killed himself"""
 		mylist = [x[0]*1000 + x[1] for x in self.pixels] # horrible trick to check if there are duplicates in pixels
-		if len(set(mylist)) < 5:
+		if len(set(mylist)) < self.length:
 			return True
 		else:
 			return False
