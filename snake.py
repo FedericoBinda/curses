@@ -19,6 +19,14 @@ class Snake:
 	def show(self,win):
 		"""show the snake in the window"""
 		win.erase()
+		# display box
+		# -----------
+		height,width = win.getmaxyx()
+		win.hline(0,0,'-',width-1)
+		win.hline(height-1,0,'-',width-1)
+		win.vline(0,0,'|',height-1)
+		win.vline(0,width-1,'|',height-1)
+		# -----------
 		for pixel in self.pixels:
 			win.addstr(pixel[0],pixel[1],'x')
 		win.refresh()
