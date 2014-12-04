@@ -6,8 +6,10 @@ import time
 class Snake:
 	"""A snake is defined by its pixels and direction"""
 	def __init__(self):
-		self.direction = [0,1] # first element = up +1 or down -1; second = right +1 left -1
+		self.direction = curses.KEY_DOWN
 		self.pixels = [[0,0]] # the head of the snake is pixellist[0]
+		self.acceptkeys = {curses.KEY_UP: [1,0], curses.KEY_DOWN: [-1,0], 
+		                   curses.KEY_RIGHT: [0,1], curses.KEY_LEFT: [0,-1]}
 	def init_pixels(self,height,width):
 		"""initialize the pixels according to the height and width of the window"""
 		myrange = range(5)
@@ -17,16 +19,18 @@ class Snake:
 		"""show the snake in the window"""
 		win.erase()
 		for pixel in self.pixels:
-			win.addstr(pixel[0],pixel[1],'x')
-	def move(self):
+			win.addstr(pixel[0],pixel[1],'x') # maybe this is too slow...
+	def move(self,key):
 		"""move the snake according to its direction"""
+		self.set_direction(key)
 		self.pixels.pop()
-		ynew = self.pixels[0][0] - self.direction[0]
-		xnew = self.pixels[0][1] + self.direction[1]
+		ynew = self.pixels[0][0] - self.acceptkeys[self.direction][0]
+		xnew = self.pixels[0][1] + self.acceptkeys[self.direction][1]
 		self.pixels.insert(0,[ynew,xnew])
-	def set_direction(self,dir):
+	def set_direction(self,key):
 		"""set direction of movement of the snake"""
-		self.direction = dir
+		if key in self.acceptkeys:
+			self.direction = key # add checks like do not invert direction
 	def am_i_inside(self,height,width):
 		"""check if the snake hit the wall"""
 		myposition = self.pixels[0]
@@ -52,7 +56,7 @@ def mycurse(stdscr):
 	key = ''
 	while key != ord('q') and snake.am_i_inside(height,width):
 		key = win.getch()
-		snake.move()
+		snake.move(key)
 		snake.show(win)
 		time.sleep(1)
 	
