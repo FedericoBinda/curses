@@ -1,15 +1,15 @@
 import curses
 import time
+from numpy import random
 
 """A small snake game"""
 
 class Snake:
 	"""A snake is defined by its pixels and direction"""
 	def __init__(self):
-		self.direction = curses.KEY_DOWN
+		self.direction = -12 # -14 = up (r), -12 = down (f), -13 = right (g), -10 = left (d)
 		self.pixels = [[0,0]] # the head of the snake is pixellist[0]
-		self.acceptkeys = {curses.KEY_UP: [1,0], curses.KEY_DOWN: [-1,0], 
-		                   curses.KEY_RIGHT: [0,1], curses.KEY_LEFT: [0,-1]}
+		self.acceptkeys = {-14 : [1,0], -12 : [-1,0], -13 : [0,1], -10 : [0,-1]}
 	def init_pixels(self,height,width):
 		"""initialize the pixels according to the height and width of the window"""
 		myrange = range(5)
@@ -19,7 +19,8 @@ class Snake:
 		"""show the snake in the window"""
 		win.erase()
 		for pixel in self.pixels:
-			win.addstr(pixel[0],pixel[1],'x') # maybe this is too slow...
+			win.addstr(pixel[0],pixel[1],'x')
+		win.refresh()
 	def move(self,key):
 		"""move the snake according to its direction"""
 		self.set_direction(key)
@@ -30,7 +31,9 @@ class Snake:
 	def set_direction(self,key):
 		"""set direction of movement of the snake"""
 		if key in self.acceptkeys:
-			self.direction = key # add checks like do not invert direction
+			if self.acceptkeys[key][0] + self.acceptkeys[self.direction][0] != 0: # do not invert direction of motion
+				self.direction = key
+			
 	def am_i_inside(self,height,width):
 		"""check if the snake hit the wall"""
 		myposition = self.pixels[0]
@@ -48,17 +51,19 @@ def mycurse(stdscr):
 	height = 20
 	width = 40
 	win = curses.newwin(height, width, begin_y, begin_x) # init window
-	win.nodelay(1) # getch does not block the program
+	win.nodelay(1) # getch() does not block the program
 	snake = Snake()
 	snake.init_pixels(height,width) # init the snake
 	snake.show(win) #show the snake
-	#time.sleep(1)
 	key = ''
 	while key != ord('q') and snake.am_i_inside(height,width):
 		key = win.getch()
-		snake.move(key)
+		myarg = random.randint(-14,-9)
+		snake.move(myarg)
+		#win.addstr(1,1,str(key))
+		#win.refresh()
 		snake.show(win)
-		time.sleep(1)
+		time.sleep(0.2)
 	
 if __name__ == '__main__':
 	curses.wrapper(mycurse)
