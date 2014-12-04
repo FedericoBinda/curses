@@ -43,6 +43,14 @@ class Snake:
 			return False
 		else:
 			return True
+			
+	def am_i_suicidal(self):
+		"""check if the snake killed himself"""
+		mylist = [x[0]*1000 + x[1] for x in self.pixels] # horrible trick to check if there are duplicates in pixels
+		if len(set(mylist)) < 5:
+			return True
+		else:
+			return False
 
 def mycurse(stdscr):
 	curses.curs_set(0) # set invisible cursor
@@ -56,7 +64,7 @@ def mycurse(stdscr):
 	snake.init_pixels(height,width) # init the snake
 	snake.show(win) #show the snake
 	key = ''
-	while key != ord('q') and snake.am_i_inside(height,width):
+	while key != ord('q') and snake.am_i_inside(height,width) and not snake.am_i_suicidal():
 		key = win.getch()
 		snake.move(key)
 		snake.show(win)
