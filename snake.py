@@ -7,9 +7,9 @@ from numpy import random
 class Snake:
 	"""A snake is defined by its pixels and direction"""
 	def __init__(self):
-		self.direction = -12 # -14 = up (r), -12 = down (f), -13 = right (g), -10 = left (d)
+		self.direction = 103 # 114 = up (r), 102 = down (f), 103 = right (g), 100 = left (d)
 		self.pixels = [[0,0]] # the head of the snake is pixellist[0]
-		self.acceptkeys = {-14 : [1,0], -12 : [-1,0], -13 : [0,1], -10 : [0,-1]}
+		self.acceptkeys = {114 : [1,0], 102 : [-1,0], 103 : [0,1], 100 : [0,-1]}
 	def init_pixels(self,height,width):
 		"""initialize the pixels according to the height and width of the window"""
 		myrange = range(5)
@@ -58,12 +58,9 @@ def mycurse(stdscr):
 	key = ''
 	while key != ord('q') and snake.am_i_inside(height,width):
 		key = win.getch()
-		myarg = random.randint(-14,-9)
-		snake.move(myarg)
-		#win.addstr(1,1,str(key))
-		#win.refresh()
+		snake.move(key)
 		snake.show(win)
-		time.sleep(0.2)
+		time.sleep(0.3)
 	
 if __name__ == '__main__':
 	curses.wrapper(mycurse)
