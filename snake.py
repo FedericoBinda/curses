@@ -22,6 +22,7 @@ class Snake:
 		myrange.reverse()
 		self.pixels = [ [self.height/2,self.width/2 - self.length + i] for i in myrange]
 	def create_fruit(self):
+		"""create a new fruit"""
 		self.fruit = [random.randint(2,self.width-1), random.randint(2,self.height-1)]
 	def show(self,win):
 		"""show the snake in the window"""
@@ -33,6 +34,9 @@ class Snake:
 		win.hline(height-1,0,'-',width-1)
 		win.vline(0,0,'|',height-1)
 		win.vline(0,width-1,'|',height-1)
+		# display score
+		# -------------
+		win.addstr(0,width/2,str(self.myscore))
 		# display fruit
 		# -------------
 		x=self.fruit[0]
