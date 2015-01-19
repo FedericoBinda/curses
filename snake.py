@@ -10,7 +10,7 @@ class Snake:
 	"""A snake is defined by its pixels and direction"""
 	def __init__(self,height,width):
 		self.direction = 103 # 114 = up (r), 102 = down (f), 103 = right (g), 100 = left (d)
-		self.pixels = [[0,0]] # the head of the snake is pixellist[0]
+		self.pixels = [[0,0]] # the head of the snake is pixels[0]
 		self.acceptkeys = {114 : [1,0], 102 : [-1,0], 103 : [0,1], 100 : [0,-1]}
 		self.length = 5
 		self.height = height
