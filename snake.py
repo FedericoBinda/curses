@@ -6,16 +6,23 @@ from numpy import random
 
 class Snake:
 	"""A snake is defined by its pixels and direction"""
-	def __init__(self):
+	def __init__(self,height,width):
 		self.direction = 103 # 114 = up (r), 102 = down (f), 103 = right (g), 100 = left (d)
 		self.pixels = [[0,0]] # the head of the snake is pixellist[0]
 		self.acceptkeys = {114 : [1,0], 102 : [-1,0], 103 : [0,1], 100 : [0,-1]}
 		self.length = 5
-	def init_pixels(self,height,width):
+		self.height = height
+		self.width = width
+		self.fruit = [3,3]
+		self.myscore = 0
+		self.init_pixels()
+	def init_pixels(self):
 		"""initialize the pixels according to the height and width of the window"""
 		myrange = range(self.length)
 		myrange.reverse()
-		self.pixels = [ [height/2,width/2 - self.length + i] for i in myrange]
+		self.pixels = [ [self.height/2,self.width/2 - self.length + i] for i in myrange]
+	def create_fruit(self):
+		self.fruit = [random.randint(2,self.width-1), random.randint(2,self.height-1)]
 	def show(self,win):
 		"""show the snake in the window"""
 		win.erase()
@@ -26,7 +33,13 @@ class Snake:
 		win.hline(height-1,0,'-',width-1)
 		win.vline(0,0,'|',height-1)
 		win.vline(0,width-1,'|',height-1)
-		# -----------
+		# display fruit
+		# -------------
+		x=self.fruit[0]
+		y=self.fruit[1]
+		win.addstr(y,x,'o')
+		# display snake
+		# -------------
 		for pixel in self.pixels:
 			win.addstr(pixel[0],pixel[1],'x')
 		win.refresh()
@@ -43,12 +56,12 @@ class Snake:
 			if self.acceptkeys[key][0] + self.acceptkeys[self.direction][0] != 0: # do not invert direction of motion
 				self.direction = key
 			
-	def am_i_inside(self,height,width):
+	def am_i_inside(self):
 		"""check if the snake hit the wall"""
 		myposition = self.pixels[0]
-		if myposition[0] <= 1 or myposition[0] >= height-1:
+		if myposition[0] <= 1 or myposition[0] >= self.height-1:
 			return False
-		elif myposition[1] <= 1 or myposition[1] >= width-1:
+		elif myposition[1] <= 1 or myposition[1] >= self.width-1:
 			return False
 		else:
 			return True
@@ -61,6 +74,18 @@ class Snake:
 		else:
 			return False
 
+	def am_i_eating(self):
+		"""check if the snake eats fruit"""
+		myposition = self.pixels[0]
+		if myposition[0] == self.fruit[1] and myposition[1] == self.fruit[0]:
+			self.create_fruit()
+			self.myscore += 1
+			self.length += 1
+			self.pixels.append([self.pixels[-1][0] - 1,self.pixels[-1][1]])
+			return True
+		else:
+			return False
+
 def mycurse(stdscr):
 	curses.curs_set(0) # set invisible cursor
 	begin_x = 20 
@@ -69,15 +94,15 @@ def mycurse(stdscr):
 	width = 40
 	win = curses.newwin(height, width, begin_y, begin_x) # init window
 	win.nodelay(1) # getch() does not block the program
-	snake = Snake()
-	snake.init_pixels(height,width) # init the snake
+	snake = Snake(height,width) #init the snake
 	snake.show(win) #show the snake
 	key = ''
-	while key != ord('q') and snake.am_i_inside(height,width) and not snake.am_i_suicidal():
+	while key != ord('q') and snake.am_i_inside() and not snake.am_i_suicidal():
+		snake.am_i_eating()
 		key = win.getch()
 		snake.move(key)
 		snake.show(win)
-		time.sleep(0.3)
+		time.sleep(5./(20+snake.myscore))
 	
 if __name__ == '__main__':
 	curses.wrapper(mycurse)
