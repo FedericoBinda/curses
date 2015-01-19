@@ -4,6 +4,8 @@ from numpy import random
 
 """A small snake game"""
 
+score = 0
+
 class Snake:
 	"""A snake is defined by its pixels and direction"""
 	def __init__(self,height,width):
@@ -13,7 +15,7 @@ class Snake:
 		self.length = 5
 		self.height = height
 		self.width = width
-		self.fruit = [3,3]
+		self.fruit = [5,5]
 		self.myscore = 0
 		self.init_pixels()
 	def init_pixels(self):
@@ -84,6 +86,8 @@ class Snake:
 		if myposition[0] == self.fruit[1] and myposition[1] == self.fruit[0]:
 			self.create_fruit()
 			self.myscore += 1
+			global score 
+			score += 1
 			self.length += 1
 			self.pixels.append([self.pixels[-1][0] - 1,self.pixels[-1][1]])
 			return True
@@ -106,7 +110,8 @@ def mycurse(stdscr):
 		key = win.getch()
 		snake.move(key)
 		snake.show(win)
-		time.sleep(5./(20+snake.myscore))
+		time.sleep(4./(15+snake.myscore))
 	
 if __name__ == '__main__':
 	curses.wrapper(mycurse)
+	print 'Your final score was', score
